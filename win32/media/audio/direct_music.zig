@@ -1290,7 +1290,7 @@ pub const IDirectSound = extern struct {
             self: *const IDirectSound,
             pcDSBufferDesc: *DSBUFFERDESC,
             ppDSBuffer: **IDirectSoundBuffer,
-            pUnkOuter: *IUnknown,
+            pUnkOuter: ?*IUnknown,
         ) callconv(@import("std").os.windows.WINAPI) HRESULT,
         GetCaps: fn(
             self: *const IDirectSound,
@@ -1326,7 +1326,7 @@ pub const IDirectSound = extern struct {
     pub fn MethodMixin(comptime T: type) type { return struct {
         pub usingnamespace IUnknown.MethodMixin(T);
         // NOTE: method is namespaced with interface name to avoid conflicts for now
-        pub fn IDirectSound_CreateSoundBuffer(self: *const T, pcDSBufferDesc: *DSBUFFERDESC, ppDSBuffer: **IDirectSoundBuffer, pUnkOuter: *IUnknown) callconv(.Inline) HRESULT {
+        pub fn IDirectSound_CreateSoundBuffer(self: *const T, pcDSBufferDesc: *DSBUFFERDESC, ppDSBuffer: **IDirectSoundBuffer, pUnkOuter: ?*IUnknown) callconv(.Inline) HRESULT {
             return @ptrCast(*const IDirectSound.VTable, self.vtable).CreateSoundBuffer(@ptrCast(*const IDirectSound, self), pcDSBufferDesc, ppDSBuffer, pUnkOuter);
         }
         // NOTE: method is namespaced with interface name to avoid conflicts for now
@@ -3701,7 +3701,7 @@ pub const IPropertyStore = extern struct {
 pub extern "DSOUND" fn DirectSoundCreate(
     pcGuidDevice: ?*const Guid,
     ppDS: **IDirectSound,
-    pUnkOuter: *IUnknown,
+    pUnkOuter: ?*IUnknown,
 ) callconv(@import("std").os.windows.WINAPI) HRESULT;
 
 pub extern "DSOUND" fn DirectSoundEnumerateA(
